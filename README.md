@@ -18,7 +18,7 @@ The `demo`-directory contains a sample project. If you have configured your syst
 Sample Code
 -----------
 
-Create the sprite class and attach any display object to it, and it will act as a mask. There is no need to add the mask to the display list.
+Create the sprite class and attach any display object to it, and it will act as a mask. There is no need to add the mask to the display list; you can change its position, scale, alpha, etc. to achieve different effects.
 
     // create masked sprite and add some children
     SXMaskedSprite *sprite = [SXMaskedSprite sprite];
@@ -28,7 +28,7 @@ Create the sprite class and attach any display object to it, and it will act as 
     SPImage *mask = [SPImage imageWithContentsOfFile:@"my_mask.png"];
 
     // apply the mask to the sprite
-    sprite.mask = movie;
+    sprite.mask = mask;
 
 More information
 ----------------
