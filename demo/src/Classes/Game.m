@@ -51,7 +51,7 @@
     [sprite addChild:image];
     [self addChild:sprite];
 
-    // and a butten to change the mask mode
+    // and a button to change the mask mode
 
     SPTexture *buttonTexture = [SPTexture textureWithContentsOfFile:@"button.png"];
     SPButton *button = [SPButton buttonWithUpState:buttonTexture text:@"Invert Mask"];
