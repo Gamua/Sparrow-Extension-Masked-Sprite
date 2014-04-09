@@ -1,9 +1,12 @@
 //
 //  SXMaskedSprite.m
-//  Demo
+//  Sparrow
 //
 //  Created by Daniel Sperl on 31.03.14.
+//  Copyright 2014 Gamua. All rights reserved.
 //
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the Simplified BSD License.
 //
 
 #import "SXMaskedSprite.h"
@@ -46,7 +49,8 @@ static uint SXBlendModeMaskInvert = 0;
     if (_mask && !_isRendering)
     {
         SPMatrix *matrix = [SPMatrix matrixWithIdentity];
-        SPRectangle *bounds = [self boundsInSpace:self];
+        SPRectangle *bounds = [[self boundsInSpace:self] intersectionWithRectangle:_mask.bounds];
+
         [self prepareTexturesForWidth:bounds.width height:bounds.height];
 
         [matrix copyFromMatrix:_mask.transformationMatrix];
