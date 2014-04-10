@@ -164,4 +164,9 @@ static uint SXBlendModeMaskInvert = 0;
     _maskRendered = NO;
 }
 
+- (void)redraw
+{
+    _maskRendered = NO;
+}
+
 @end
