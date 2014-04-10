@@ -54,15 +54,34 @@
     // and a button to change the mask mode
 
     SPTexture *buttonTexture = [SPTexture textureWithContentsOfFile:@"button.png"];
-    SPButton *button = [SPButton buttonWithUpState:buttonTexture text:@"Invert Mask"];
-    [button addEventListenerForType:SPEventTypeTriggered block:^(id event)
+    
+    SPButton *buttonInvert = [SPButton buttonWithUpState:buttonTexture text:@"Invert Mask"];
+    
+    __weak SPButton *wButtonInvert = buttonInvert;
+    [buttonInvert addEventListenerForType:SPEventTypeTriggered block:^(id event)
      {
          sprite.inverted = !sprite.inverted;
+         wButtonInvert.text = [(sprite.inverted ? @"Normal" : @"Invert") stringByAppendingString:@" Mask"];
      }];
 
-    button.x = (stageWidth - button.width) / 2.0f;
-    button.y = 20;
-    [self addChild:button];
+    buttonInvert.x = stageWidth / 2.0f - buttonInvert.width - 0.5f;
+    buttonInvert.y = 20;
+    [self addChild:buttonInvert];
+    
+    // and a button to change the animate mode
+    
+    SPButton *buttonAnimate = [SPButton buttonWithUpState:buttonTexture text:@"Deanimate Mask"];
+    
+    __weak SPButton *wButtonAnimated = buttonAnimate;
+    [buttonAnimate addEventListenerForType:SPEventTypeTriggered block:^(id event)
+     {
+         sprite.animated = !sprite.animated;
+         wButtonAnimated.text = [(sprite.animated ? @"Deanimate" : @"Animate") stringByAppendingString:@" Mask"];
+     }];
+    
+    buttonAnimate.x = stageWidth / 2.0f + 0.5f;
+    buttonAnimate.y = 20;
+    [self addChild:buttonAnimate];
 }
 
 @end

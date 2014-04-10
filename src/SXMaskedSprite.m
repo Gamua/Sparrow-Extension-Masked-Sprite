@@ -25,6 +25,7 @@ static uint SXBlendModeMaskInvert = 0;
     SPImage *_canvasImage;
 
     BOOL _isRendering;
+    BOOL _maskRendered;
     uint _blendMode;
 }
 
@@ -39,6 +40,7 @@ static uint SXBlendModeMaskInvert = 0;
     if ((self = [super init]))
     {
         _blendMode = SXBlendModeMaskNormal;
+        _animated = YES;
     }
 
     return self;
@@ -48,44 +50,65 @@ static uint SXBlendModeMaskInvert = 0;
 {
     if (_mask && !_isRendering)
     {
-        SPMatrix *matrix = [SPMatrix matrixWithIdentity];
-        SPRectangle *bounds = [self boundsInSpace:self];
-        
-        if (_blendMode == SXBlendModeMaskNormal)
-            bounds = [bounds intersectionWithRectangle:_mask.bounds];
-
-        [self prepareTexturesForWidth:bounds.width height:bounds.height];
-
-        [matrix copyFromMatrix:_mask.transformationMatrix];
-        [matrix translateXBy:-bounds.x yBy:-bounds.y];
-
-        [_maskTexture drawBundled:^
+        if (!_animated && _maskRendered)
         {
-            [_maskTexture clear];
-            [_maskTexture drawObject:_mask withMatrix:matrix];
-        }];
-
-        [_canvasTexture drawBundled:^
+            SPMatrix *matrix = [SPMatrix matrixWithIdentity];
+            [matrix copyFromMatrix:_mask.transformationMatrix];
+            
+            if (_blendMode == SXBlendModeMaskInvert)
+            {
+                SPRectangle *bounds = [self boundsInSpace:self];
+                SPRectangle *intersectBounds = [bounds intersectionWithRectangle:_mask.bounds];
+                [matrix translateXBy:bounds.x-intersectBounds.x yBy:bounds.y-intersectBounds.y];
+            }
+            
+            [support pushStateWithMatrix:matrix alpha:1.0f blendMode:SPBlendModeAuto];
+            [_canvasImage render:support];
+            [support popState];
+        }
+        else
         {
-            _isRendering = YES;
-            _maskImage.blendMode = _blendMode;
+            SPMatrix *matrix = [SPMatrix matrixWithIdentity];
+            SPRectangle *bounds = [self boundsInSpace:self];
+            
+            if (_blendMode == SXBlendModeMaskNormal)
+                bounds = [bounds intersectionWithRectangle:_mask.bounds];
 
-            [matrix identity];
+            [self prepareTexturesForWidth:bounds.width height:bounds.height];
+
+            [matrix copyFromMatrix:_mask.transformationMatrix];
             [matrix translateXBy:-bounds.x yBy:-bounds.y];
 
-            [_canvasTexture clear];
-            [_canvasTexture drawObject:self withMatrix:matrix];
-            [_canvasTexture drawObject:_maskImage];
+            [_maskTexture drawBundled:^
+            {
+                [_maskTexture clear];
+                [_maskTexture drawObject:_mask withMatrix:matrix];
+            }];
 
-            _isRendering = NO;
-        }];
+            [_canvasTexture drawBundled:^
+            {
+                _isRendering = YES;
+                _maskImage.blendMode = _blendMode;
 
-        [matrix identity];
-        [matrix translateXBy:bounds.x yBy:bounds.y];
+                [matrix identity];
+                [matrix translateXBy:-bounds.x yBy:-bounds.y];
 
-        [support pushStateWithMatrix:matrix alpha:1.0f blendMode:SPBlendModeAuto];
-        [_canvasImage render:support];
-        [support popState];
+                [_canvasTexture clear];
+                [_canvasTexture drawObject:self withMatrix:matrix];
+                [_canvasTexture drawObject:_maskImage];
+
+                _isRendering = NO;
+            }];
+
+            [matrix identity];
+            [matrix translateXBy:bounds.x yBy:bounds.y];
+
+            [support pushStateWithMatrix:matrix alpha:1.0f blendMode:SPBlendModeAuto];
+            [_canvasImage render:support];
+            [support popState];
+            
+            _maskRendered = YES;
+        }
     }
     else
     {
@@ -127,6 +150,7 @@ static uint SXBlendModeMaskInvert = 0;
         [NSException raise:SPExceptionInvalidOperation format:@"invalid mask dimensions"];
 
     _mask = mask;
+    _maskRendered = NO;
 }
 
 - (BOOL)inverted
@@ -137,6 +161,7 @@ static uint SXBlendModeMaskInvert = 0;
 - (void)setInverted:(BOOL)inverted
 {
     _blendMode = inverted ? SXBlendModeMaskInvert : SXBlendModeMaskNormal;
+    _maskRendered = NO;
 }
 
 @end

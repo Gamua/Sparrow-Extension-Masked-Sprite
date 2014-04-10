@@ -15,5 +15,6 @@
 
 @property (nonatomic, strong) SPDisplayObject *mask;
 @property (nonatomic, assign) BOOL inverted;
+@property (nonatomic, assign) BOOL animated;
 
 @end
