@@ -50,9 +50,10 @@ static uint SXBlendModeMaskInvert = 0;
 {
     if (_mask && !_isRendering)
     {
+        SPMatrix *matrix = [SPMatrix matrixWithIdentity];
+        
         if (!_animated && _maskRendered)
         {
-            SPMatrix *matrix = [SPMatrix matrixWithIdentity];
             [matrix copyFromMatrix:_mask.transformationMatrix];
             
             if (_blendMode == SXBlendModeMaskInvert)
@@ -68,7 +69,6 @@ static uint SXBlendModeMaskInvert = 0;
         }
         else
         {
-            SPMatrix *matrix = [SPMatrix matrixWithIdentity];
             SPRectangle *bounds = [self boundsInSpace:self];
             
             if (_blendMode == SXBlendModeMaskNormal)
