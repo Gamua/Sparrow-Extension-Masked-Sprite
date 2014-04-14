@@ -34,7 +34,7 @@ More information
 ----------------
 
 Additional information can be found in the [Sparrow wiki][1].
-Thanks a lot to Jonathan Heart — his [Pixelmask][2] Starling extension was the inspiration for this port.
+Thanks a lot to Jonathan Hart — his [Pixelmask][2] Starling extension was the inspiration for this port.
 
 [1]: http://wiki.sparrow-framework.org/extensions/masked_sprite
 [2]: http://wiki.starling-framework.org/extensions/pixelmask
