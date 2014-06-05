@@ -49,7 +49,10 @@ static uint SXBlendModeMaskInvert = 0;
     if (_mask && !_isRendering)
     {
         SPMatrix *matrix = [SPMatrix matrixWithIdentity];
-        SPRectangle *bounds = [[self boundsInSpace:self] intersectionWithRectangle:_mask.bounds];
+        SPRectangle *bounds = [self boundsInSpace:self];
+        
+        if (_blendMode == SXBlendModeMaskNormal)
+            bounds = [bounds intersectionWithRectangle:_mask.bounds];
 
         [self prepareTexturesForWidth:bounds.width height:bounds.height];
 
