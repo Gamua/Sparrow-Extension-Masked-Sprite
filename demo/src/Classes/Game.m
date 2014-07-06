@@ -51,18 +51,53 @@
     [sprite addChild:image];
     [self addChild:sprite];
 
-    // and a button to change the mask mode
+    // create a button to change the mask mode
 
     SPTexture *buttonTexture = [SPTexture textureWithContentsOfFile:@"button.png"];
-    SPButton *button = [SPButton buttonWithUpState:buttonTexture text:@"Invert Mask"];
-    [button addEventListenerForType:SPEventTypeTriggered block:^(id event)
+    
+    SPButton *buttonInvert = [SPButton buttonWithUpState:buttonTexture text:@"Invert Mask"];
+    
+    __weak SPButton *wButtonInvert = buttonInvert;
+    [buttonInvert addEventListenerForType:SPEventTypeTriggered block:^(id event)
      {
          sprite.inverted = !sprite.inverted;
+         wButtonInvert.text = [(sprite.inverted ? @"Normal" : @"Invert") stringByAppendingString:@" Mask"];
      }];
 
-    button.x = (stageWidth - button.width) / 2.0f;
-    button.y = 20;
-    [self addChild:button];
+    buttonInvert.x = stageWidth / 2.0f - buttonInvert.width - 5.0f;
+    buttonInvert.y = 20;
+    [self addChild:buttonInvert];
+    
+    // create a button to redraw mask when not animated
+    
+    SPButton *buttonRedraw = [SPButton buttonWithUpState:buttonTexture text:@"Redraw"];
+    buttonRedraw.visible = !sprite.animated;
+    
+    [buttonRedraw addEventListenerForType:SPEventTypeTriggered block:^(id event)
+     {
+         [sprite redraw];
+     }];
+    
+    buttonRedraw.x = (stageWidth - buttonInvert.width) / 2.0f;
+    buttonRedraw.y = buttonInvert.y + buttonInvert.height + 10.0f;
+    [self addChild:buttonRedraw];
+    
+    // create a button to change the animate mode
+    
+    SPButton *buttonAnimate = [SPButton buttonWithUpState:buttonTexture text:@"Deanimate"];
+    
+    __weak SPButton *wButtonAnimated = buttonAnimate;
+    __weak SPButton *wButtonRedraw = buttonRedraw;
+    [buttonAnimate addEventListenerForType:SPEventTypeTriggered block:^(id event)
+     {
+         sprite.animated = !sprite.animated;
+         wButtonAnimated.text = (sprite.animated ? @"Deanimate" : @"Animate");
+         wButtonRedraw.visible = !sprite.animated;
+     }];
+    
+    buttonAnimate.x = stageWidth / 2.0f + 5.0f;
+    buttonAnimate.y = 20;
+    [self addChild:buttonAnimate];
 }
 
 @end
